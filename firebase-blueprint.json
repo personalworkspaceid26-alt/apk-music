@@ -1,0 +1,127 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Pengaturan pengguna, akun musik terhubung, dan konfigurasi ekualizer Arun Music.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "UID pengguna Firebase Auth." },
+        "displayName": { "type": "string", "description": "Nama tampilan pengguna." },
+        "autoSync": { "type": "boolean", "description": "Status sinkronisasi otomatis real-time dengan akun terhubung." },
+        "ytMusicConnected": { "type": "boolean", "description": "Apakah akun YouTube Music terhubung." },
+        "ytMusicAccount": { "type": "string", "description": "Identitas akun YouTube Music." },
+        "spotifyConnected": { "type": "boolean", "description": "Apakah akun Spotify terhubung." },
+        "spotifyAccount": { "type": "string", "description": "Identitas akun Spotify." },
+        "linkedApps": { "type": "array", "description": "Daftar aplikasi musik lain yang ditautkan (maks 10)." },
+        "streamQuality": { "type": "string", "enum": ["LOW", "NORMAL", "HIGH", "LOSSLESS"] },
+        "downloadQuality": { "type": "string", "enum": ["NORMAL", "HIGH", "LOSSLESS"] },
+        "glassIntensity": { "type": "string", "enum": ["SUBTLE", "BALANCED", "DEEP"] },
+        "eqPreset": { "type": "string", "enum": ["FLAT", "BASS_BOOST", "POP", "ROCK", "JAZZ", "CUSTOM"] },
+        "eqBands": { "type": "array", "description": "5 band nilai dB ekualizer (-12 s/d 12)." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Harus dikirim menggunakan FieldValue.serverTimestamp()." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Harus dikirim menggunakan FieldValue.serverTimestamp()." }
+      },
+      "required": [
+        "userId", "displayName", "autoSync", "ytMusicConnected", "ytMusicAccount",
+        "spotifyConnected", "spotifyAccount", "linkedApps", "streamQuality",
+        "downloadQuality", "glassIntensity", "eqPreset", "eqBands", "createdAt", "updatedAt"
+      ]
+    },
+    "Playlist": {
+      "title": "Playlist",
+      "description": "Daftar putar milik pengguna yang disinkronkan secara real-time.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "trackIds": { "type": "array" },
+        "coverKey": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "name", "description", "trackIds", "coverKey", "createdAt", "updatedAt"]
+    },
+    "LibraryTrack": {
+      "title": "LibraryTrack",
+      "description": "Status pustaka per lagu (disukai, koleksi album, unduhan offline, dan statistik putar).",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "trackId": { "type": "string" },
+        "liked": { "type": "boolean" },
+        "savedAlbum": { "type": "boolean" },
+        "downloaded": { "type": "boolean" },
+        "playCount": { "type": "integer" },
+        "totalListenSec": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "trackId", "liked", "savedAlbum", "downloaded", "playCount", "totalListenSec", "createdAt", "updatedAt"]
+    },
+    "PlayHistory": {
+      "title": "PlayHistory",
+      "description": "Log kronologis pemutaran lagu untuk Baru Saja Diputar, Riwayat, dan Statistik Recap.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "trackId": { "type": "string" },
+        "trackTitle": { "type": "string" },
+        "artistName": { "type": "string" },
+        "genre": { "type": "string" },
+        "platform": { "type": "string", "enum": ["SPOTIFY", "YOUTUBE_MUSIC"] },
+        "listenedSeconds": { "type": "integer" },
+        "playedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "trackId", "trackTitle", "artistName", "genre", "platform", "listenedSeconds", "playedAt"]
+    },
+    "ImportedTrack": {
+      "title": "ImportedTrack",
+      "description": "Lagu yang diimpor dari Spotify (tautan atau file ekspor) untuk diputar dan disinkronkan.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "trackId": { "type": "string" },
+        "title": { "type": "string" },
+        "artist": { "type": "string" },
+        "album": { "type": "string" },
+        "genre": { "type": "string" },
+        "durationSec": { "type": "integer" },
+        "artworkUrl": { "type": "string" },
+        "previewUrl": { "type": "string" },
+        "spotifyUri": { "type": "string" },
+        "youtubeVideoId": { "type": "string" },
+        "youtubeTitle": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "userId", "trackId", "title", "artist", "album", "genre",
+        "durationSec", "artworkUrl", "previewUrl", "spotifyUri",
+        "youtubeVideoId", "youtubeTitle", "createdAt", "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Dokumen profil, akun terhubung, ekualizer, dan preferensi pengguna."
+    },
+    "/users/{userId}/playlists/{playlistId}": {
+      "schema": { "$ref": "#/entities/Playlist" },
+      "description": "Subkoleksi playlist pengguna."
+    },
+    "/users/{userId}/library_tracks/{trackId}": {
+      "schema": { "$ref": "#/entities/LibraryTrack" },
+      "description": "Subkoleksi status pustaka lagu per pengguna."
+    },
+    "/users/{userId}/play_history/{entryId}": {
+      "schema": { "$ref": "#/entities/PlayHistory" },
+      "description": "Subkoleksi riwayat pemutaran lagu pengguna."
+    },
+    "/users/{userId}/imported_tracks/{trackId}": {
+      "schema": { "$ref": "#/entities/ImportedTrack" },
+      "description": "Subkoleksi lagu yang diimpor dari Spotify."
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Arun Music",
+  "description": "Pemutar musik modern dengan desain Liquid Glass, Dynamic Island interaktif, sinkronisasi real-time Firestore, ekualizer, pengenalan lagu, dan pustaka terintegrasi.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
